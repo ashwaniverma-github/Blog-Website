@@ -1,9 +1,10 @@
 name = "backend"
 compatibility_date = "2023-12-01"
 
-# [vars]
-DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZjc3ZGQ5ZDItY2I0YS00YjFmLTlhNDUtOTMwYzlhODBiNGNiIiwidGVuYW50X2lkIjoiYzY2NDBjNGI0OTYyZmI2ZGRlNzRlNDE3NzQzMzM0Y2JmZjYwMzBmYTFiOTlhMTViYTQzY2QwMjUxMzk2ZDA4NCIsImludGVybmFsX3NlY3JldCI6IjYzYjg1ZWYzLTM4ODgtNGI4Ny05Mjc0LTFkZmVjMThiMzBkMCJ9.lktuXeZiSvXV2xez4ED-cl7rNJGdk-Vg-5gYj4zPFaQ"
+[vars]
+DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiYzU3OTQ2NDQtMjBjYy00YWJjLWJkYTgtNGFmODMxOGMxYjdhIiwidGVuYW50X2lkIjoiODRiNDFhZmEyNWE3MGZjNDMwNzA1ODU3Y2VjYTY5NDg2ODMwOTg5MmE0OTA2Y2Q2N2QyYzlkNGFkODE2YTJkMiIsImludGVybmFsX3NlY3JldCI6IjhiZTA3MDQzLTdkZjgtNDkwZS1iNjMzLTkyMWYyODNjYmQ1OCJ9.auossPWOfxmZ2wbYYKRQm5i2Em3ik5Zej-uHer6LN50"
 JWT_SECRET = "MediumSignup"
+
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
 # id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
