@@ -15,20 +15,31 @@ export const blogRouter = new Hono<{
     }
 }>();
 
-blogRouter.use('/*',async (c)=>{
-  const authHeader = c.req.header('authorization') || ""
-  const user = await verify(authHeader,c.env.JWT_SECRET)
-  if(user){
-    c.set("userId",user.id)
-  }else{
+/// any request comes at blog route it will go through this middleware first for authentication 
+blogRouter.use('/*',async(c,next)=>{
+  try{
+    const authHeader = c.req.header('authorization') || ""
+    const user = await verify(authHeader,c.env.JWT_SECRET)
+    if(user){
+      c.set("userId",user.id)
+      await next()
+    }else{
+      c.status(403)
+      return c.json({
+        message:"Not logged in please try again"
+      })
+    }
+  }
+  catch(e){
     c.status(403)
     return c.json({
-      message:"Not logged in please try again"
+      "msg":"You are not logged in"
     })
   }
+ 
 })
 
-
+///  Blog writing
 blogRouter.post('/',async (c)=>{
   const prisma = new PrismaClient({ 
 		datasourceUrl:c.env.DATABASE_URL
@@ -36,12 +47,12 @@ blogRouter.post('/',async (c)=>{
 
   try{
     const body = await c.req.json();
-
+    const authorId = c.get('userId')
     const blog = await prisma.post.create({
       data:{
         title:body.title,
         content:body.content,
-        authorId:"1"
+        authorId: authorId
       }
     })
     return c.json({
@@ -56,19 +67,68 @@ blogRouter.post('/',async (c)=>{
     })
   }
 
+})
+
+
+
+  //// other fucking  .... routes 
+blogRouter.put('/',async (c)=>{
+  const prisma = new PrismaClient({ 
+		datasourceUrl:c.env.DATABASE_URL
+	}).$extends(withAccelerate());
+
+  const body = await c.req.json()
+  const blog = await prisma.post.update({
+    where:{
+      id:body.id
+    },
+    data:{
+      title:body.title,
+      content:body.content
+    }, 
+  })
+  return c.json({
+    id:blog.id
+  })
+
+  })
+
+  blogRouter.get('/bulk',async (c)=>{
+    const prisma = new PrismaClient({ 
+      datasourceUrl:c.env.DATABASE_URL
+    }).$extends(withAccelerate());
+
+    const blogs = await prisma.post.findMany()
+    return c.json({
+      blogs
+    })
 
   })
   
-blogRouter.put('/blog',(c)=>{
-    return c.text("BLog")
+blogRouter.get('/:id',async (c)=>{
+  const id =  c.req.param("id")
+  const prisma = new PrismaClient({ 
+		datasourceUrl:c.env.DATABASE_URL
+	}).$extends(withAccelerate());
+  try{
+    const blog = await prisma.post.findFirst({
+      where:{
+        id: Number(id)
+      }
+    })
+    return c.json({
+      blog
+    })
+  } 
+  catch(e){
+    c.status(403);
+    return c.json({
+      "msg":"error fetching the  blog for you",
+      e
+    })
+  }
   })
   
-blogRouter.get('/blog:id',(c)=>{
-    return c.text("get blog route")
-  })
-  
-  blogRouter.get('/bulk',(c)=>{
-    return c.text("get blog")
-  })
+ 
   
 
