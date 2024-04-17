@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { Hono } from 'hono'
 import { sign } from 'hono/jwt'
+import { signinInput,signupInput,createBlogInput,updateBlogInput } from 'ashwani-medium-common'
 
 
 export const userRouter = new Hono<{
@@ -16,6 +17,13 @@ userRouter.post('/signup', async (c) => {
 		datasourceUrl:c.env.DATABASE_URL
 	}).$extends(withAccelerate())
 	const body = await c.req.json();
+	const { success } = signupInput.safeParse(body)
+	if(!success){
+		c.status(403)
+		return c.json({
+			msg:"Invalid Inputs"
+		})
+	}
 	try {
 		const user = await prisma.user.create({
 			data: {
@@ -38,20 +46,36 @@ userRouter.post('/signin', async (c)=>{
 		datasourceUrl:c.env.DATABASE_URL
 	}).$extends(withAccelerate());
 	const body = await c.req.json()
-	const user = await prisma.user.findUnique({
-		where:{
-			email:body.email,
-			password:body.password
-		}
-	})
-	if(!user){
+	const {success} = signinInput.safeParse(body)
+	if(!success){
 		c.status(403)
 		return c.json({
-			msg:"error sigining up"
+			msg:"Invalid Inputs"
 		})
 	}
-	const jwt = await sign({id:user.id},c.env.JWT_SECRET)
-	return c.json({jwt})
+	try {
+		const user = await prisma.user.findUnique({
+			where:{
+				email:body.email,
+				password:body.password
+			}
+		})
+		if(!user){
+			c.status(403)
+			return c.json({
+				msg:"error sigining up"
+			})
+		}
+		const jwt = await sign({id:user.id},c.env.JWT_SECRET)
+		return c.json({jwt})
+	}
+	catch(e){
+		c.status(403)
+		return c.json({
+			"msg":"Error Signin"
+		})
+	}
+	
 })
 
 
