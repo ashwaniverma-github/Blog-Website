@@ -7,35 +7,35 @@ interface BlogCardProps{
     content:string;
 }
 
-async function getTitle(){
-    const response = await axios.post(`${BACKEND_URL}`)
-}
-
 export const BlogCard = ({
     authorName,
     publishedDate,
     title,
     content
 }:BlogCardProps)=>{
-    return <div>
-        <div className="flex p-2 ">
+    return <div className="p-4 border-b border-slate-200 cursor-pointer">
+        <div className=" flex p-2 ">
             <Avatar name= {authorName}/>
-            <div className="p-2">
+            <div className="font-extralight pl-2 text-sm flex justify-center flex-col">
                 {authorName}
             </div>
-            <div className="py-2 text-gray-500">
+            <Dot/>
+            <div className="pl-2 font-thin text-slate-500 text-sm flex justify-center flex-col">
                 {publishedDate}
             </div>
         </div>
-       
-        <div className="">
-            {title}
+
+        <div className="flex flex-col px-2 ">
+            <div className=" font-semibold text-xl">
+                {title}
+            </div>
+            <div className="text-md font-thin">
+                {content.slice(0,100)+"..."}
+            </div>
         </div>
-        <div>
-            {content.slice(0,100)+"..."}
-        </div>
-        <div>
-            {`${Math.ceil(content.length/100)} minutes`}
+        
+        <div className=" pl-2 text-sm font-thin text-slate-500"> 
+            {`${Math.ceil(content.length/100)} minutes read`}
         </div>
         <div className="bg-grey-200 h-1 w-full">
 
@@ -43,10 +43,18 @@ export const BlogCard = ({
     </div>
 }
 
-function Avatar({name}:{name:string}){
+export function Avatar({name}:{name:string}){
     return <div className="">      
-        <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+        <div className="relative inline-flex items-center justify-center w-8 h-8 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
             <span className="font-medium text-gray-600 dark:text-gray-300">{name[0]}</span>
         </div>
     </div>
+}
+
+function Dot() {
+    return (
+        <div className="flex items-center justify-center pl-1">
+            <div className="w-1 h-1 rounded-full bg-slate-300"></div>
+        </div>
+    );
 }
