@@ -2,12 +2,39 @@ import { useEffect, useState } from "react"
 import { BACKEND_URL } from "../config";
 import axios from "axios";
 
-interface Blog{
-    "content": string
-    "title": string
-    "id": Number
+export interface Blog{
+    "id": number;
+    "title": string;
+    "content": string;
     "author": {
-        "name": string
+        "name": string;
+    }
+}
+
+export const useBlog = ({id}:{id:string})=>{
+    const [loading,setLoading] = useState(true);
+    const [blog,setblog] = useState<Blog>();
+
+    useEffect(()=>{
+        axios.get(`${BACKEND_URL}/api/v1/blog/${id}`,({
+            headers:{
+                Authorization:localStorage.getItem('token') || ''
+            }
+        }))
+            .then(response=>{
+                setblog(response.data.blog);
+                setLoading(false);
+            })
+            .catch((error)=>{
+                console.error(error)
+                setLoading(false)
+            })
+    },[id])
+
+
+    return {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+        loading,
+        blog
     }
 }
 
